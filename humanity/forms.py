@@ -5,6 +5,7 @@ import random
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 OPERATIONS = {
     '+': operator.add,
@@ -58,7 +59,8 @@ class HumanityForm(forms.Form):
 
         self.fields['humanity_question'] = HumanityQuestionField(**params)
         self.fields['humanity_answer'] = forms.CharField(
-            label="To prove your humanity, solve %s =" % label,
+            #label="To prove your humanity, solve %s =" % label,
+            label="%s %s =" % (_('To prove your humanity, solve'), label)
             required=False,
             widget=forms.TextInput(attrs={'size': '2'}),
         )
@@ -69,6 +71,6 @@ class HumanityForm(forms.Form):
         a = self.cleaned_data.get('humanity_answer', '')
 
         if not is_correct_answer(q, a):
-            raise ValidationError(getattr(settings, "HUMANITY_ERROR_MESSAGE", "You are a robot!"))
+            raise ValidationError(getattr(settings, "HUMANITY_ERROR_MESSAGE", _("Please provide a correct solution.")))
 
         return self.cleaned_data
